@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "299664269818",
+    "project_id": "digital-navigator-94f33",
+    "storage_bucket": "digital-navigator-94f33.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:299664269818:android:2bc7ad57caa62a7b384443",
+        "android_client_info": {
+          "package_name": "com.G06.digital_navigator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8F8r0MmyI2wdfeczR_oRggCvQZQk1-0A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
