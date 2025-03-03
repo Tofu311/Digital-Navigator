@@ -1,3 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../services/auth_service.dart';
 import './create_account.dart';
 import 'package:flutter/material.dart';
 
@@ -46,11 +49,41 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 30.0,
             ),
             ElevatedButton(
-              onPressed: () {
-                print(
-                    'Email: ${_emailController.text}, Password: ${_passwordController.text}');
+              onPressed: () async {
+                final message = await AuthService().loginUserWithEmail(
+                  email: _emailController.text,
+                  password: _passwordController.text,
+                );
+                if (message!.contains('Success')) {
+                  Navigator.of(context).pushReplacement(
+                    // TODO: Change scaffold to home page in the future
+                    MaterialPageRoute(builder: (context) => const Scaffold()));
+                }
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(message),
+                  ),
+                );
               },
               child: const Text('Login'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                try {
+                  final UserCredential userCredential = await AuthService().signInWithGoogle();
+                  if (userCredential.user != null) {
+                    Navigator.of(context).pushReplacement(
+                      // TODO: Replace with Home page later
+                      MaterialPageRoute(builder: (context) => const Scaffold())
+                    );
+                  }
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Google Sign-In failed: $e')),
+                  );
+                }
+              }, 
+              child: const Text('Sign in with Google')
             ),
             const SizedBox(
               height: 30.0,

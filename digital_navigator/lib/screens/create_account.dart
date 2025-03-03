@@ -47,7 +47,7 @@ class _CreateAccountState extends State<CreateAccount> {
               height: 30.0,
             ),
             ElevatedButton(
-              onPressed: () async{
+              onPressed: () async {
                 final message = await AuthService().registerUserWithEmail(
                   email: _emailController.text, 
                   password: _passwordController.text,

@@ -37,7 +37,7 @@ class AuthService {
   }
 
   // User login with email & password
-  Future<String?> loginUserWithEmail(String email, String password) async {
+  Future<String?> loginUserWithEmail({required String email, required String password}) async {
     try {
       final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
@@ -56,43 +56,36 @@ class AuthService {
   }
 
   // Sign in with Google
-  Future<String?> signInWithGoogle() async {
-    try {
-      // Trigger the authentication flow
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if(googleUser == null) {
-        return "Google Sign-In cancelled";
-      }
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
 
-      // Create a new credential
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
-      );
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
 
-      UserCredential userCredential = await _auth.signInWithCredential(credential);
-      User? user = userCredential.user;
+    UserCredential userCredential = await _auth.signInWithCredential(credential);
+    User? user = userCredential.user;
 
-      // Check if user exists in Firestore database already
-      DocumentSnapshot userDoc = await _firestore.collection('users').doc(user!.uid).get();
-      if(!userDoc.exists) {
-        // New user, store user in database
-        await _firestore.collection('users').doc(user.uid).set({
-          'uid': user.uid,
-          'email': user.email,
-          'fullName': user.displayName ?? '',
-          'photoURL': user.photoURL ?? '',
-          'createdAt': DateTime.now(),
-        });
-      }
-
-      return 'Success';
-    } catch (e) {
-      return e.toString();
+    // Check if user exists in Firestore database already
+    DocumentSnapshot userDoc = await _firestore.collection('users').doc(user!.uid).get();
+    if(!userDoc.exists) {
+      // New user, store user in database
+      await _firestore.collection('users').doc(user.uid).set({
+        'uid': user.uid,
+        'email': user.email,
+        'fullName': user.displayName ?? '',
+        'photoURL': user.photoURL ?? '',
+        'createdAt': DateTime.now(),
+      });
     }
+    
+    return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
   // Logout User
